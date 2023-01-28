@@ -2,7 +2,7 @@ const mongoose= require('mongoose');
 mongoose.set('strictQuery', false);
 
 module.exports= ()=>{
-    const connection_string= 'mongodb+srv://pranjulagrawal:FUKwYm22SBgmAJti@cluster0.6g3meva.mongodb.net/?retryWrites=true&w=majority';
+    const connection_string= `mongodb+srv://pranjulagrawal:${process.env.MONGODB_PASSWORD}@cluster0.6g3meva.mongodb.net/?retryWrites=true&w=majority`;
 
     const options= {
         useNewUrlParser: true, 
