@@ -112,22 +112,35 @@ const deleteMyProfile = async (req, res) => {
 const getMyInfo = async (req, res) => {
   try {
     const userId = req._id;
-    const user = await User.findById(userId).populate('followings');
-    const suggestionsArray=[];
-    user.followings.forEach((following)=>{
-      suggestionsArray.push(...following.followings);
-    });
-    let uniqueSuggestionsArray= [...new Set(suggestionsArray)];
+    // const user = await User.findById(userId).populate('followings');
+    // const suggestionsArray=[];
+    // user.followings.forEach((following)=>{
+    //   suggestionsArray.push(...following.followings);
+    // });
+    // let uniqueSuggestionsArray= [...new Set(suggestionsArray)];
+    // const suggestions= await User.find({
+    // $and: [{
+    //   _id:{
+    //     $in: uniqueSuggestionsArray
+    //   }
+    // }, {
+    //   _id:{
+    //     $nin: user.followings
+    //   }
+    // }]});
+
+    const user = await User.findById(userId);
     const suggestions= await User.find({
-    $and: [{
-      _id:{
-        $in: uniqueSuggestionsArray
+      $and: [{
+      _id: {
+        $ne: userId
       }
-    }, {
-      _id:{
+     }, {
+      _id: {
         $nin: user.followings
       }
     }]});
+
     res.send(success(200, {user, suggestions}));
   } 
   catch (error) {
