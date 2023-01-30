@@ -129,7 +129,10 @@ const getMyInfo = async (req, res) => {
     //   }
     // }]});
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate('followers').populate('followings');
+    const numPosts= user.posts.length;
+    const numFollowers= user.followers.length;
+    const numFollowings= user.followings.length;
     const suggestions= await User.find({
       $and: [{
       _id: {
@@ -141,7 +144,7 @@ const getMyInfo = async (req, res) => {
       }
     }]});
 
-    res.send(success(200, {user, suggestions}));
+    res.send(success(200, {user, numPosts, numFollowers, numFollowings, suggestions}));
   } 
   catch (error) {
     res.send(err(500, error.message));
@@ -151,17 +154,19 @@ const getMyInfo = async (req, res) => {
 const getUserProfile= async (req, res)=>{
   try {
     const currUserId= req._id;
+    const currUser= await User.findById(currUserId);
     const {userId}= req.body;
     let isFollowed= false;
-    const user= await User.findById(userId).populate('posts');
-    if(user.followers.includes(currUserId))
+    const user= await User.findById(userId).populate('posts').populate('followers').populate('followings');
+
+    if(user.followers.some(follower => follower._id.toString()===currUserId))
       isFollowed= true;
 
     const numPosts= user.posts.length;
     const numFollowers= user.followers.length;
     const numFollowings= user.followings.length;
 
-    res.send(success(200, {user, isFollowed, numPosts, numPosts, numFollowers, numFollowings}));
+    res.send(success(200, {user, isFollowed, numPosts, numFollowers, numFollowings}));
   } catch (error) {
     res.send(err(500, error.message));
   }
