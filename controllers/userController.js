@@ -188,7 +188,7 @@ const updateMyProfile = async (req, res) => {
       await user.save();
     }
     if (userImgDataUrl) {
-        if(!user.userImg){
+        if(!user.userImg.publicId){
           const cloudinaryResult = await cloudinary.uploader.upload(userImgDataUrl, {
             folder: 'userImages'
           });
